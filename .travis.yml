@@ -1,18 +1,23 @@
-language: python
-sudo: false
+sudo: required
+language: go
+go:
+    - "1.12"
+
 services:
-- docker
-python:
-- '3.7.5'
+  - docker
 
-cache:
-  directories:
-  - "$HOME/.cache/pip"
-before_script: 
-  - "sudo apt-get update && sudo apt-get install -y apt-transport-https"
-  - "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -"
-  - "echo \"deb https://apt.kubernetes.io/ kubernetes-xenial main\" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list"
-  - "sudo apt-get update"
-  - "sudo apt-get install -y kubectl"
-  - "sudo kubectl version"
+install: true
 
+script: 
+  - echo "Run your tests here"
+
+before_install:
+  # Download and install Kind and kubectl
+  - GO111MODULE=on go get sigs.k8s.io/kind
+  - kind create cluster --config kind-config.yaml
+  - export KUBECONFIG="$(kind get kubeconfig-path --name="kind")"
+  - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+  - chmod +x ./kubectl
+  - ./kubectl get nodes -o wide
+  - ./kubectl get pods --all-namespaces -o wide
+  - ./kubectl get services --all-namespaces -o wide

@@ -15,4 +15,6 @@ before_script:
   - "sudo apt-get update"
   - "sudo apt-get install -y kubectl"
   - "sudo kubectl version"
-
+  - "curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64"
+  - "chmod +x ./kind"
+  - "echo\"pwd\"
